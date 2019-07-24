@@ -4,20 +4,26 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
-        stage('Build') { 
+	    stage('Compile') { 
             steps { 
-                sh 'make' 
-            }
+			    withMaven(maven: 'maven_3_6_1'){
+					sh 'mvn clean compile' 
+				}
+			}
+        }
+        stage('Build') { 
+           withMaven(maven: 'maven_3_6_1'){
+					sh 'mvn build' 
+				}
         }
         stage('Test'){
-            steps {
-                sh 'make check'
-                junit 'reports/**/*.xml' 
-            }
+			withMaven(maven: 'maven_3_6_1'){
+					sh 'mvn test' 
+				}
         }
         stage('Deploy') {
             steps {
-                sh 'make publish'
+                sh 'echo %hello%'
             }
         }
     }
